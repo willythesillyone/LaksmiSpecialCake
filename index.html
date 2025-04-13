@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Lakshmi!</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #ffebf3;
+            margin: 0;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        h1 {
+            color: #d23369;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        #cake-container {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            margin: 0 auto;
+        }
+        
+        #cake {
+            position: absolute;
+            bottom: 0;
+            left: 50px;
+            width: 200px;
+            height: 120px;
+            background-color: #f8c8dc;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        #cake-top {
+            position: absolute;
+            bottom: 120px;
+            left: 30px;
+            width: 240px;
+            height: 30px;
+            background-color: #ff69b4;
+            border-radius: 120px / 15px;
+        }
+        
+        .candle {
+            position: absolute;
+            bottom: 150px;
+            width: 10px;
+            height: 60px;
+            background: linear-gradient(to right, #e0e0e0, #ffffff, #e0e0e0);
+            border-radius: 5px;
+        }
+        
+        .flame {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            width: 15px;
+            height: 30px;
+            background: linear-gradient(to top, #ff9900, #ffcc00, #ffffff);
+            border-radius: 50% 50% 20% 20%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px #ff9900;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+        
+        .flame.out {
+            opacity: 0;
+        }
+        
+        #message {
+            margin-top: 20px;
+            color: #d23369;
+            font-size: 1.2em;
+        }
+        
+        #instructions {
+            margin-top: 20px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        #reset-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #d23369;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        
+        #reset-btn:hover {
+            background-color: #b52a5a;
+        }
+    </style>
+</head>
+<body>
+    <h1>Happy Birthday Lakshmi!</h1>
+    
+    <div id="cake-container">
+        <div id="cake"></div>
+        <div id="cake-top"></div>
+        <!-- Candles will be added by JavaScript -->
+    </div>
+    
+    <div id="message">Make a wish and blow out the candles!</div>
+    <div id="instructions">(Blow into your microphone or click the flames)</div>
+    <button id="reset-btn">Relight Candles</button>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cakeContainer = document.getElementById('cake-container');
+            const message = document.getElementById('message');
+            const resetBtn = document.getElementById('reset-btn');
+            
+            // Create 5 candles
+            const candleCount = 5;
+            const candles = [];
+            
+            function createCandles() {
+                for (let i = 0; i < candleCount; i++) {
+                    const candle = document.createElement('div');
+                    candle.className = 'candle';
+                    candle.style.left = `${50 + i * 40}px`;
+                    
+                    const flame = document.createElement('div');
+                    flame.className = 'flame';
+                    flame.dataset.lit = 'true';
+                    
+                    candle.appendChild(flame);
+                    cakeContainer.appendChild(candle);
+                    
+                    candles.push({
+                        element: flame,
+                        lit: true
+                    });
+                    
+                    // Add click event to blow out candle
+                    flame.addEventListener('click', function() {
+                        blowOutCandle(flame);
+                    });
+                }
+            }
+            
+            function checkAllOut() {
+                return candles.every(candle => !candle.lit);
+            }
+            
+            function blowOutCandle(flame) {
+                if (flame.dataset.lit === 'true') {
+                    flame.dataset.lit = 'false';
+                    flame.classList.add('out');
+                    
+                    // Update candle state
+                    const candle = candles.find(c => c.element === flame);
+                    if (candle) candle.lit = false;
+                    
+                    if (checkAllOut()) {
+                        message.textContent = "Happy Birthday Lakshmi! 🎉";
+                        showConfetti();
+                    }
+                }
+            }
+            
+            function relightCandles() {
+                candles.forEach(candle => {
+                    candle.element.dataset.lit = 'true';
+                    candle.element.classList.remove('out');
+                    candle.lit = true;
+                });
+                message.textContent = "Make a wish and blow out the candles!";
+            }
+            
+            function showConfetti() {
+                // Simple confetti effect
+                const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+                
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.style.position = 'fixed';
+                        confetti.style.width = '10px';
+                        confetti.style.height = '10px';
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.left = `${Math.random() * 100}vw`;
+                        confetti.style.top = '-10px';
+                        confetti.style.borderRadius = '50%';
+                        confetti.style.zIndex = '1000';
+                        document.body.appendChild(confetti);
+                        
+                        // Animation
+                        const duration = Math.random() * 3000 + 2000;
+                        confetti.animate([
+                            { top: '-10px', opacity: 1 },
+                            { top: `${Math.random() * 100}vh`, opacity: 0 }
+                        ], {
+                            duration: duration,
+                            easing: 'cubic-bezier(0.1,0.8,0.9,1)'
+                        });
+                        
+                        // Remove after animation
+                        setTimeout(() => {
+                            confetti.remove();
+                        }, duration);
+                    }, Math.random() * 1000);
+                }
+            }
+            
+            // Microphone blow detection
+            function setupMicrophone() {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    document.getElementById('instructions').textContent = '(Click the flames to blow them out)';
+                    return;
+                }
+                
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        const audioContext = new AudioContext();
+                        const analyser = audioContext.createAnalyser();
+                        const microphone = audioContext.createMediaStreamSource(stream);
+                        microphone.connect(analyser);
+                        analyser.fftSize = 256;
+                        
+                        const bufferLength = analyser.frequencyBinCount;
+                        const dataArray = new Uint8Array(bufferLength);
+                        
+                        let blowTimeout;
+                        
+                        function detectBlow() {
+                            analyser.getByteFrequencyData(dataArray);
+                            
+                            let total = 0;
+                            for (let i = 0; i < bufferLength; i++) {
+                                total += dataArray[i];
+                            }
+                            
+                            const average = total / bufferLength;
+                            
+                            if (average > 60) { // Threshold for blowing
+                                if (!blowTimeout) {
+                                    blowTimeout = setTimeout(() => {
+                                        // Blow out a random candle that's still lit
+                                        const litCandles = candles.filter(c => c.lit);
+                                        if (litCandles.length > 0) {
+                                            const randomCandle = litCandles[Math.floor(Math.random() * litCandles.length)];
+                                            blowOutCandle(randomCandle.element);
+                                        }
+                                        blowTimeout = null;
+                                    }, 300);
+                                }
+                            } else if (blowTimeout) {
+                                clearTimeout(blowTimeout);
+                                blowTimeout = null;
+                            }
+                            
+                            requestAnimationFrame(detectBlow);
+                        }
+                        
+                        detectBlow();
+                    })
+                    .catch(err => {
+                        console.error('Microphone access denied:', err);
+                        document.getElementById('instructions').textContent = '(Click the flames to blow them out)';
+                    });
+            }
+            
+            // Initialize
+            createCandles();
+            setupMicrophone();
+            
+            // Reset button
+            resetBtn.addEventListener('click', relightCandles);
+        });
+    </script>
+</body>
+</html>
